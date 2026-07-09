@@ -464,9 +464,13 @@ function onUpdatePostSuccess(data: Post) {
   handleClearCache(data.metadata.name);
 }
 
+const canManageAttachments = computed(() =>
+  utils.permission.has(["uc:attachments:manage"])
+);
+
 // Upload image
 async function handleUploadImage(file: File, options?: AxiosRequestConfig) {
-  if (!utils.permission.has(["uc:attachments:manage"])) {
+  if (!canManageAttachments.value) {
     return;
   }
 
@@ -477,6 +481,39 @@ async function handleUploadImage(file: File, options?: AxiosRequestConfig) {
     options
   );
   return data;
+}
+
+async function handleMatchAttachmentPermalinks(urls: string[]) {
+  if (!canManageAttachments.value) {
+    return [];
+  }
+
+  const { data } =
+    await ucApiClient.storage.attachment.matchAttachmentPermalinksForUc({
+      attachmentPermalinkMatchRequest: {
+        urls,
+      },
+    });
+
+  return (data.items || []).map((item) => ({
+    url: item.url || "",
+    matched: item.matched || false,
+  }));
+}
+
+async function handleUploadExternalUrl(url: string) {
+  if (!canManageAttachments.value) {
+    return;
+  }
+
+  const { data } = await ucApiClient.storage.attachment.uploadAttachmentForUc({
+    url,
+  });
+
+  return {
+    url: data.status?.permalink || "",
+    alt: data.spec.displayName,
+  };
 }
 
 // Keep session alive
@@ -540,6 +577,12 @@ useSessionKeepAlive();
       v-model:title="formState.spec.title"
       v-model:cover="formState.spec.cover"
       :upload-image="handleUploadImage"
+      :match-attachment-permalinks="
+        canManageAttachments ? handleMatchAttachmentPermalinks : undefined
+      "
+      :upload-external-url="
+        canManageAttachments ? handleUploadExternalUrl : undefined
+      "
       class="h-full"
       @update="handleSetContentCache"
     />

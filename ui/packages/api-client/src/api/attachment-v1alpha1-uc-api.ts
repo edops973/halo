@@ -26,6 +26,10 @@ import type { Attachment } from '../models';
 // @ts-ignore
 import type { AttachmentList } from '../models';
 // @ts-ignore
+import type { AttachmentPermalinkMatchList } from '../models';
+// @ts-ignore
+import type { AttachmentPermalinkMatchRequest } from '../models';
+// @ts-ignore
 import type { UcUploadFromUrlRequest } from '../models';
 /**
  * AttachmentV1alpha1UcApi - axios parameter creator
@@ -223,6 +227,49 @@ export const AttachmentV1alpha1UcApiAxiosParamCreator = function (configuration?
             };
         },
         /**
+         * Match URL strings against Attachment permalinks for user center.
+         * @param {AttachmentPermalinkMatchRequest} attachmentPermalinkMatchRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        matchAttachmentPermalinksForUc: async (attachmentPermalinkMatchRequest: AttachmentPermalinkMatchRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'attachmentPermalinkMatchRequest' is not null or undefined
+            assertParamExists('matchAttachmentPermalinksForUc', 'attachmentPermalinkMatchRequest', attachmentPermalinkMatchRequest)
+            const localVarPath = `/apis/uc.api.storage.halo.run/v1alpha1/attachments/-/match-permalinks`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(attachmentPermalinkMatchRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * Upload attachment to user center storage.
          * @param {File} [file] The file to upload. If not provided, the url will be used.
          * @param {string} [filename] The filename to use when uploading from url. If not provided, the filename will be extracted from the url.
@@ -337,6 +384,18 @@ export const AttachmentV1alpha1UcApiFp = function(configuration?: Configuration)
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
+         * Match URL strings against Attachment permalinks for user center.
+         * @param {AttachmentPermalinkMatchRequest} attachmentPermalinkMatchRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async matchAttachmentPermalinksForUc(attachmentPermalinkMatchRequest: AttachmentPermalinkMatchRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AttachmentPermalinkMatchList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.matchAttachmentPermalinksForUc(attachmentPermalinkMatchRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['AttachmentV1alpha1UcApi.matchAttachmentPermalinksForUc']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
          * Upload attachment to user center storage.
          * @param {File} [file] The file to upload. If not provided, the url will be used.
          * @param {string} [filename] The filename to use when uploading from url. If not provided, the filename will be extracted from the url.
@@ -387,6 +446,15 @@ export const AttachmentV1alpha1UcApiFactory = function (configuration?: Configur
          */
         listMyAttachments(requestParameters: AttachmentV1alpha1UcApiListMyAttachmentsRequest = {}, options?: RawAxiosRequestConfig): AxiosPromise<AttachmentList> {
             return localVarFp.listMyAttachments(requestParameters.page, requestParameters.size, requestParameters.labelSelector, requestParameters.fieldSelector, requestParameters.sort, requestParameters.ungrouped, requestParameters.keyword, requestParameters.accepts, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Match URL strings against Attachment permalinks for user center.
+         * @param {AttachmentV1alpha1UcApiMatchAttachmentPermalinksForUcRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        matchAttachmentPermalinksForUc(requestParameters: AttachmentV1alpha1UcApiMatchAttachmentPermalinksForUcRequest, options?: RawAxiosRequestConfig): AxiosPromise<AttachmentPermalinkMatchList> {
+            return localVarFp.matchAttachmentPermalinksForUc(requestParameters.attachmentPermalinkMatchRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Upload attachment to user center storage.
@@ -483,6 +551,13 @@ export interface AttachmentV1alpha1UcApiListMyAttachmentsRequest {
 }
 
 /**
+ * Request parameters for matchAttachmentPermalinksForUc operation in AttachmentV1alpha1UcApi.
+ */
+export interface AttachmentV1alpha1UcApiMatchAttachmentPermalinksForUcRequest {
+    readonly attachmentPermalinkMatchRequest: AttachmentPermalinkMatchRequest
+}
+
+/**
  * Request parameters for uploadAttachmentForUc operation in AttachmentV1alpha1UcApi.
  */
 export interface AttachmentV1alpha1UcApiUploadAttachmentForUcRequest {
@@ -536,6 +611,16 @@ export class AttachmentV1alpha1UcApi extends BaseAPI {
      */
     public listMyAttachments(requestParameters: AttachmentV1alpha1UcApiListMyAttachmentsRequest = {}, options?: RawAxiosRequestConfig) {
         return AttachmentV1alpha1UcApiFp(this.configuration).listMyAttachments(requestParameters.page, requestParameters.size, requestParameters.labelSelector, requestParameters.fieldSelector, requestParameters.sort, requestParameters.ungrouped, requestParameters.keyword, requestParameters.accepts, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Match URL strings against Attachment permalinks for user center.
+     * @param {AttachmentV1alpha1UcApiMatchAttachmentPermalinksForUcRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public matchAttachmentPermalinksForUc(requestParameters: AttachmentV1alpha1UcApiMatchAttachmentPermalinksForUcRequest, options?: RawAxiosRequestConfig) {
+        return AttachmentV1alpha1UcApiFp(this.configuration).matchAttachmentPermalinksForUc(requestParameters.attachmentPermalinkMatchRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

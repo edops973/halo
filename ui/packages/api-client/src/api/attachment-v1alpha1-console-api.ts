@@ -26,6 +26,10 @@ import type { Attachment } from '../models';
 // @ts-ignore
 import type { AttachmentList } from '../models';
 // @ts-ignore
+import type { AttachmentPermalinkMatchList } from '../models';
+// @ts-ignore
+import type { AttachmentPermalinkMatchRequest } from '../models';
+// @ts-ignore
 import type { UploadFromUrlRequest } from '../models';
 /**
  * AttachmentV1alpha1ConsoleApi - axios parameter creator
@@ -69,6 +73,49 @@ export const AttachmentV1alpha1ConsoleApiAxiosParamCreator = function (configura
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(uploadFromUrlRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Match URL strings against Attachment permalinks for console.
+         * @param {AttachmentPermalinkMatchRequest} attachmentPermalinkMatchRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        matchAttachmentPermalinksForConsole: async (attachmentPermalinkMatchRequest: AttachmentPermalinkMatchRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'attachmentPermalinkMatchRequest' is not null or undefined
+            assertParamExists('matchAttachmentPermalinksForConsole', 'attachmentPermalinkMatchRequest', attachmentPermalinkMatchRequest)
+            const localVarPath = `/apis/console.api.storage.halo.run/v1alpha1/attachments/-/match-permalinks`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication basicAuth required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(attachmentPermalinkMatchRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -290,6 +337,18 @@ export const AttachmentV1alpha1ConsoleApiFp = function(configuration?: Configura
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
+         * Match URL strings against Attachment permalinks for console.
+         * @param {AttachmentPermalinkMatchRequest} attachmentPermalinkMatchRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async matchAttachmentPermalinksForConsole(attachmentPermalinkMatchRequest: AttachmentPermalinkMatchRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AttachmentPermalinkMatchList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.matchAttachmentPermalinksForConsole(attachmentPermalinkMatchRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['AttachmentV1alpha1ConsoleApi.matchAttachmentPermalinksForConsole']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
          * Search attachments with pagination, sorting, keyword, grouping, and media type filters.
          * @param {number} [page] Page number. Default is 0.
          * @param {number} [size] Size number. Default is 0.
@@ -355,6 +414,15 @@ export const AttachmentV1alpha1ConsoleApiFactory = function (configuration?: Con
             return localVarFp.externalTransferAttachment(requestParameters.uploadFromUrlRequest, options).then((request) => request(axios, basePath));
         },
         /**
+         * Match URL strings against Attachment permalinks for console.
+         * @param {AttachmentV1alpha1ConsoleApiMatchAttachmentPermalinksForConsoleRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        matchAttachmentPermalinksForConsole(requestParameters: AttachmentV1alpha1ConsoleApiMatchAttachmentPermalinksForConsoleRequest, options?: RawAxiosRequestConfig): AxiosPromise<AttachmentPermalinkMatchList> {
+            return localVarFp.matchAttachmentPermalinksForConsole(requestParameters.attachmentPermalinkMatchRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
          * Search attachments with pagination, sorting, keyword, grouping, and media type filters.
          * @param {AttachmentV1alpha1ConsoleApiSearchAttachmentsRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
@@ -389,6 +457,13 @@ export const AttachmentV1alpha1ConsoleApiFactory = function (configuration?: Con
  */
 export interface AttachmentV1alpha1ConsoleApiExternalTransferAttachmentRequest {
     readonly uploadFromUrlRequest: UploadFromUrlRequest
+}
+
+/**
+ * Request parameters for matchAttachmentPermalinksForConsole operation in AttachmentV1alpha1ConsoleApi.
+ */
+export interface AttachmentV1alpha1ConsoleApiMatchAttachmentPermalinksForConsoleRequest {
+    readonly attachmentPermalinkMatchRequest: AttachmentPermalinkMatchRequest
 }
 
 /**
@@ -488,6 +563,16 @@ export class AttachmentV1alpha1ConsoleApi extends BaseAPI {
      */
     public externalTransferAttachment(requestParameters: AttachmentV1alpha1ConsoleApiExternalTransferAttachmentRequest, options?: RawAxiosRequestConfig) {
         return AttachmentV1alpha1ConsoleApiFp(this.configuration).externalTransferAttachment(requestParameters.uploadFromUrlRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Match URL strings against Attachment permalinks for console.
+     * @param {AttachmentV1alpha1ConsoleApiMatchAttachmentPermalinksForConsoleRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public matchAttachmentPermalinksForConsole(requestParameters: AttachmentV1alpha1ConsoleApiMatchAttachmentPermalinksForConsoleRequest, options?: RawAxiosRequestConfig) {
+        return AttachmentV1alpha1ConsoleApiFp(this.configuration).matchAttachmentPermalinksForConsole(requestParameters.attachmentPermalinkMatchRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

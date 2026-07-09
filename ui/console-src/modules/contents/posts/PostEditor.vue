@@ -455,9 +455,13 @@ useSaveKeybinding(handleSave);
 // Keep session alive
 useSessionKeepAlive();
 
+const canManageAttachments = computed(() =>
+  utils.permission.has(["system:attachments:manage"])
+);
+
 // Upload image
 async function handleUploadImage(file: File, options?: AxiosRequestConfig) {
-  if (!utils.permission.has(["system:attachments:manage"])) {
+  if (!canManageAttachments.value) {
     return;
   }
 
@@ -469,6 +473,42 @@ async function handleUploadImage(file: File, options?: AxiosRequestConfig) {
       options
     );
   return data;
+}
+
+async function handleMatchAttachmentPermalinks(urls: string[]) {
+  if (!canManageAttachments.value) {
+    return [];
+  }
+
+  const { data } =
+    await consoleApiClient.storage.attachment.matchAttachmentPermalinksForConsole(
+      {
+        attachmentPermalinkMatchRequest: {
+          urls,
+        },
+      }
+    );
+
+  return (data.items || []).map((item) => ({
+    url: item.url || "",
+    matched: item.matched || false,
+  }));
+}
+
+async function handleUploadExternalUrl(url: string) {
+  if (!canManageAttachments.value) {
+    return;
+  }
+
+  const { data } =
+    await consoleApiClient.storage.attachment.uploadAttachmentForConsole({
+      url,
+    });
+
+  return {
+    url: data.status?.permalink || "",
+    alt: data.spec.displayName,
+  };
 }
 </script>
 
@@ -561,6 +601,12 @@ async function handleUploadImage(file: File, options?: AxiosRequestConfig) {
       v-model:title="formState.post.spec.title"
       v-model:cover="formState.post.spec.cover"
       :upload-image="handleUploadImage"
+      :match-attachment-permalinks="
+        canManageAttachments ? handleMatchAttachmentPermalinks : undefined
+      "
+      :upload-external-url="
+        canManageAttachments ? handleUploadExternalUrl : undefined
+      "
       class="size-full"
       @update="handleSetContentCache"
     />
